@@ -14,7 +14,7 @@
     <link href="style.css" rel="stylesheet">
 </head>
 
-<body>
+<body onbeforeunload="return confirmReload()">
     <div class="big-wrapper">
         <ul class="nav nav-tabs">
             <li class="nav-item">
@@ -74,6 +74,11 @@
         integrity="sha384-A3rJD856KowSb7dwlZdYEkO39Gagi7vIsF0jrRAoQmDKKtQBHUuLZ9AsSv4jD4Xa"
         crossorigin="anonymous"></script>
     <script src="script.js"></script>
+    <script>
+        function confirmReload() {
+            return "Are you sure you want to reload?  You will lost all progress.";
+        }
+    </script>
 </body>
 
 </html>
