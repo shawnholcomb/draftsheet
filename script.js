@@ -174,7 +174,6 @@ function playerDivAddListener() {
         const avoid = x.classList.contains("avoid");
         const neither = !x.classList.contains("check-off") && !x.classList.contains("my-team") && !x.classList.contains("watch") && !x.classList.contains("avoid");
 
-
         if (neither) {
             x.classList.add("check-off");
         } else if (checked) {
@@ -182,12 +181,12 @@ function playerDivAddListener() {
             x.classList.add("my-team");
         } else if (myTeam) {
             x.classList.remove("my-team");
+            x.classList.add("avoid")
+        } else if (avoid) {
+            x.classList.remove("avoid");
             x.classList.add("watch");
         } else if (watch) {
             x.classList.remove("watch");
-            x.classList.add("avoid");
-        } else if (avoid) {
-            x.classList.remove("avoid");
         }
     }));
 }
