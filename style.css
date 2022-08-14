@@ -90,15 +90,15 @@ i:hover {
 
 .check-off  {
     text-decoration: line-through;
-    color: red;
-    background-color: #ffcccb;
+    color: red !important;
+    background-color: #ffcccb !important;
     font-weight: normal;
 }
 
 .my-team {
     text-decoration: none;
-    color: green;
-    background-color: #b7ffbf;
+    color: green !important;
+    background-color: #b7ffbf !important;
     font-weight: normal;
 }
 

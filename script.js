@@ -1,3 +1,4 @@
+// General setup and functions
 
 const d = document;
 let qbArr = [];
@@ -5,6 +6,14 @@ let rbArr = [];
 let wrArr = [];
 let teArr = [];
 let dstArr = [];
+
+d.addEventListener("DOMContentLoaded", function () {
+    checkLocalStorage();
+});
+
+function checkLocalStorage() {
+    localStorage.getItem("playerData") === null ? d.querySelector(".data-load").setAttribute("disabled", "disabled") : d.querySelector(".data-load").removeAttribute("disabled", "disabled");
+}
 
 function Player(playerName, position, team, rank, watch, avoid) {
     this.playerName = playerName;
@@ -19,10 +28,39 @@ function watchPlayer(x) {
     x.watch ? false : true;
 }
 
-function avoidPlayer (x) {
+function avoidPlayer(x) {
     x.avoid ? false : true;
 }
+
+function showMessage(message) {
+    d.querySelector(".message").textContent = message
+    setTimeout(() => {
+        d.querySelector(".message").textContent = ""
+    }, 1000);
+}
+
+function playerDivAddListener() {
+    const playerDiv = d.querySelectorAll(".player-div");
+    playerDiv.forEach(x => x.addEventListener("click", () => {
+        const neither = !x.classList.contains("check-off") && !x.classList.contains("my-team");
+        const checked = x.classList.contains("check-off");
+        const myTeam = x.classList.contains("my-team");
+        // const watch = x.classList.contains("watch");
+        // const avoid = x.classList.contains("avoid");
+
+        if (neither) {
+            x.classList.add("check-off");
+        } else if (checked) {
+            x.classList.remove("check-off");
+            x.classList.add("my-team");
+        } else if (myTeam) {
+            x.classList.remove("my-team");
+        }
+    }));
+}
+
 // tabbed navigation
+
 const tabs = d.querySelectorAll(".nav-link");
 
 tabs.forEach(x => x.addEventListener("click", function () {
@@ -46,13 +84,6 @@ d.querySelector(".close-link").addEventListener("click", () => {
 
 // data tab functions
 
-function showMessage(message) {
-    d.querySelector(".message").textContent = message
-    setTimeout(() => {
-        d.querySelector(".message").textContent = ""
-    }, 1000);
-}
-
 d.querySelector(".data-clear").addEventListener("click", () => {
     showMessage("cleared...");
     d.getElementById("raw-data").value = "";
@@ -66,19 +97,23 @@ d.querySelector(".data-clear").addEventListener("click", () => {
     wrArr = [];
     teArr = [];
     dstArr = [];
+    localStorage.clear();
+    checkLocalStorage();
 });
 
-d.querySelector(".data-save").addEventListener("click", () => { 
+d.querySelector(".data-save").addEventListener("click", () => {
     const rawData = d.getElementById("raw-data").value;
     localStorage.setItem("playerData", rawData);
     showMessage("saved...")
+    checkLocalStorage();
 });
 
-d.querySelector(".data-load").addEventListener("click", () => { 
+d.querySelector(".data-load").addEventListener("click", () => {
     const data = localStorage.getItem("playerData")
     data ? showMessage("data loaded...") : showMessage("no data found...")
     d.getElementById("raw-data").value = data;
     d.querySelector(".data-process").click();
+    checkLocalStorage();
 });
 
 d.querySelector(".data-process").addEventListener("click", () => {
@@ -91,16 +126,19 @@ d.querySelector(".data-process").addEventListener("click", () => {
     const rawData = d.getElementById("raw-data").value;
     const rawArr = rawData.split(";");
     const dataArr = rawArr.map(x => x.trim());
-    dataArr.splice(dataArr.length -1, 1);
+    dataArr.splice(dataArr.length - 1, 1);
     dataArr.forEach(x => {
         const playerArr = x.split(" ");
-        const posTeam = playerArr[playerArr.length - 1]
-        const posTeamArr = posTeam.split("-");
+        const posTeam = playerArr[playerArr.length - 1];
+        const posTeamAttr = posTeam.split(",");
+        let watch = posTeamAttr[1] == "TRUE" ? true : false;
+        let avoid = posTeamAttr[2] == "TRUE" ? true : false;
+        const posTeamArr = posTeamAttr[0].split("-");
         const position = posTeamArr[0];
         const team = posTeamArr[1];
         const playerName = x.split(posTeam)[0].trim();
         const rank = dataArr.indexOf(x) + 1;
-        let player = new Player(playerName, position, team, rank, false, false)
+        let player = new Player(playerName, position, team, rank, watch, avoid)
         switch (position) {
             case "QB":
                 qbArr.push(player);
@@ -136,6 +174,9 @@ d.querySelector(".data-process").addEventListener("click", () => {
             const posSection = d.querySelector(posClass)
             let playerDiv = d.createElement("div")
             playerDiv.className = "player-div";
+            p.watch ? playerDiv.classList.add("watch") : playerDiv.classList.remove("watch");
+            p.avoid ? playerDiv.classList.add("avoid") : playerDiv.classList.remove("avoid");
+
             let rankSpan = d.createElement("span");
             rankSpan.appendChild(d.createTextNode(p.rank));
             let nameSpan = d.createElement("span");
@@ -163,30 +204,6 @@ d.querySelector(".data-process").addEventListener("click", () => {
     d.querySelector(".sheet-section").style.display = "block";
     d.querySelector(".sheet-link").classList.add("active");
     d.querySelector(".data-link").classList.remove("active");
+
+    checkLocalStorage();
 });
-
-function playerDivAddListener() {
-    const playerDiv = d.querySelectorAll(".player-div");
-    playerDiv.forEach(x => x.addEventListener("click", () => {
-        const checked = x.classList.contains("check-off");
-        const myTeam = x.classList.contains("my-team");
-        const watch = x.classList.contains("watch");
-        const avoid = x.classList.contains("avoid");
-        const neither = !x.classList.contains("check-off") && !x.classList.contains("my-team") && !x.classList.contains("watch") && !x.classList.contains("avoid");
-
-        if (neither) {
-            x.classList.add("check-off");
-        } else if (checked) {
-            x.classList.remove("check-off");
-            x.classList.add("my-team");
-        } else if (myTeam) {
-            x.classList.remove("my-team");
-            x.classList.add("avoid")
-        } else if (avoid) {
-            x.classList.remove("avoid");
-            x.classList.add("watch");
-        } else if (watch) {
-            x.classList.remove("watch");
-        }
-    }));
-}
