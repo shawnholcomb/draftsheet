@@ -6,6 +6,9 @@ body {
     max-height: 100vh;
     max-width: 100vw;
     font-size: 12px;
+    background-image: url("LXGLogo5.png");
+    background-position: center;
+    background-repeat: no-repeat;
 }
 
 section {
