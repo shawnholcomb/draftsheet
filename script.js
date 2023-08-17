@@ -15,11 +15,12 @@ function checkLocalStorage() {
     localStorage.getItem("playerData") === null ? d.querySelector(".data-load").setAttribute("disabled", "disabled") : d.querySelector(".data-load").removeAttribute("disabled", "disabled");
 }
 
-function Player(playerName, position, team, rank, watch, avoid) {
+function Player(playerName, position, team, rank, tier, watch, avoid) {
     this.playerName = playerName;
     this.position = position;
     this.team = team;
     this.rank = rank;
+    this.tier = tier;
     this.watch = watch;
     this.avoid = avoid;
 }
@@ -131,14 +132,15 @@ d.querySelector(".data-process").addEventListener("click", () => {
         const playerArr = x.split(" ");
         const posTeam = playerArr[playerArr.length - 1];
         const posTeamAttr = posTeam.split(",");
-        let watch = posTeamAttr[1] == "TRUE" ? true : false;
-        let avoid = posTeamAttr[2] == "TRUE" ? true : false;
+        let tier = posTeamAttr[1];
+        let watch = posTeamAttr[2] == "TRUE" ? true : false;
+        let avoid = posTeamAttr[3] == "TRUE" ? true : false;
         const posTeamArr = posTeamAttr[0].split("-");
         const position = posTeamArr[0];
         const team = posTeamArr[1];
         const playerName = x.split(posTeam)[0].trim();
         const rank = dataArr.indexOf(x) + 1;
-        let player = new Player(playerName, position, team, rank, watch, avoid)
+        let player = new Player(playerName, position, team, rank, tier, watch, avoid)
         switch (position) {
             case "QB":
                 qbArr.push(player);
@@ -158,6 +160,21 @@ d.querySelector(".data-process").addEventListener("click", () => {
         }
     })
 
+    function tierListUpdates(classname) {
+        const checkClass = d.getElementsByClassName(classname).length > 0;
+        console.log(classname)
+        if (checkClass) {
+            let position = classname.split("-")[0];
+            let tierNumber = classname.split("-")[2];
+            let tier = d.querySelector(`.${classname}`);
+            let tierDiv = d.createElement("div");
+            tierDiv.classList.add("tier-header");
+            tierDiv.appendChild(d.createTextNode(`Tier ${tierNumber}`));
+            let section = d.querySelector(`.${position}-section`);
+            section.insertBefore(tierDiv, tier);
+        }
+    }
+
     function updateRanks(x) {
         x.forEach(p => p.rank = x.indexOf(p) + 1);
     }
@@ -174,12 +191,13 @@ d.querySelector(".data-process").addEventListener("click", () => {
             const posSection = d.querySelector(posClass)
             let playerDiv = d.createElement("div")
             playerDiv.className = "player-div";
+            playerDiv.classList.add(`${p.position.toLowerCase()}-tier-${p.tier}`);
             p.watch ? playerDiv.classList.add("watch") : playerDiv.classList.remove("watch");
             p.avoid ? playerDiv.classList.add("avoid") : playerDiv.classList.remove("avoid");
-
             let rankSpan = d.createElement("span");
             rankSpan.appendChild(d.createTextNode(p.rank));
             let nameSpan = d.createElement("span");
+            nameSpan.classList.add("text-weight-bold");
             nameSpan.appendChild(d.createTextNode("  " + p.playerName));
             let teamSpan = d.createElement("span");
             teamSpan.appendChild(d.createTextNode(" (" + p.team + ")"));
@@ -188,7 +206,6 @@ d.querySelector(".data-process").addEventListener("click", () => {
             playerDiv.appendChild(teamSpan);
             posSection.append(playerDiv);
         })
-
     }
 
     d.querySelectorAll(".add-notice").forEach(x => x.style.display = "none")
@@ -199,6 +216,10 @@ d.querySelector(".data-process").addEventListener("click", () => {
     addToTabs(teArr)
     addToTabs(dstArr)
     playerDivAddListener();
+
+    const tiersArr = ["qb-tier-1", "qb-tier-2", "qb-tier-3", "qb-tier-4", "qb-tier-5", "rb-tier-1", "rb-tier-2", "rb-tier-3", "rb-tier-4", "rb-tier-5", "rb-tier-6", "rb-tier-7", "rb-tier-8", "wr-tier-1", "wr-tier-2", "wr-tier-3", "wr-tier-4", "wr-tier-5", "wr-tier-6", "wr-tier-7", "wr-tier-8", "te-tier-1", "te-tier-2", "te-tier-3", "te-tier-4", "te-tier-5", "dst-tier-1", "dst-tier-2", "dst-tier-3", "dst-tier-4", "dst-tier-5"];
+    tiersArr.forEach(x => tierListUpdates(x));
+    // tierListUpdates("qb-tier-1");
 
     d.querySelector(".data-section").style.display = "none";
     d.querySelector(".sheet-section").style.display = "block";
