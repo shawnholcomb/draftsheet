@@ -6,9 +6,10 @@ body {
     max-height: 100vh;
     max-width: 100vw;
     font-size: 12px;
-    background-image: url("LXGLogo5.png");
+    font-family: "Poppins",Arial,Helvetica,sans-serif;
+    /* background-image: url("LXGLogo5.png");
     background-position: center;
-    background-repeat: no-repeat;
+    background-repeat: no-repeat; */
 }
 
 section {
@@ -83,12 +84,24 @@ i:hover {
     display: none;
 }
 
+.pos-section {
+    width: 20%;
+}
+
 .pos-section h6 {
     border-bottom: 1px solid #dee2e6;
 }
 
 .player-div {
     margin: 0 auto 5px;
+}
+
+.player-div span {
+    margin-right: 5px;
+}
+
+.player-div:nth-child(odd) {
+    background-color: #f5f5f5;
 }
 
 .check-off  {
@@ -108,7 +121,7 @@ i:hover {
 .watch {
     color: #6495ed;
     font-weight: bold;
-    background-color: none;
+    /* background-color: none; */
 }
 
 .avoid  {
