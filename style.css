@@ -95,7 +95,7 @@ i:hover {
 }
 
 .player-div {
-    padding: 5px 0;
+    padding: 5px;
 }
 
 .player-div:nth-child(even) {
